@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashBoard</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="bg-image"></div>
+    <main id="app">
+        <h1>DashBoard</h1>
+        <hr>
+        <section v-for="section in sections" :key="section.id">
+            <h2>{{ section.title }}</h2>
+            <div class="bubbles">
+                <div 
+                    v-for="bubble in section.bubbles" 
+                    :key="bubble.id"
+                    class="bubble"
+                    @click="goToLink(bubble.url)"
+                    :style="{ backgroundColor: bubble.color, color: getTextColor(bubble.color) }"
+                >
+                <img v-if="bubble.image"  :src="'assets/images/' + bubble.image" :alt="bubble.name">
+                <span v-else>{{ bubble.name }}</span>
+                </div>
+            </div>
+            <hr>
+        </section>
+    </main>
+        
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script src="main.js" type="module"></script>
+</body>
+</html>

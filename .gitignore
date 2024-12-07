@@ -1,0 +1,3 @@
+assets/images/*
+assets/data.json
+!assets/images/default-bg.JPG
