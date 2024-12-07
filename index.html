@@ -7,13 +7,16 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+    <!-- Background image -->
     <div id="bg-image"></div>
     <main id="app">
         <h1>DashBoard</h1>
         <hr>
+        <!-- All sections -->
         <section v-for="section in sections" :key="section.id">
             <h2>{{ section.title }}</h2>
             <div class="bubbles">
+                <!-- All bubbles -->
                 <div 
                     v-for="bubble in section.bubbles" 
                     :key="bubble.id"
@@ -21,8 +24,9 @@
                     @click="goToLink(bubble.url)"
                     :style="{ backgroundColor: bubble.color, color: getTextColor(bubble.color) }"
                 >
-                <img v-if="bubble.image"  :src="'assets/images/' + bubble.image" :alt="bubble.name">
-                <span v-else>{{ bubble.name }}</span>
+                    <!-- if(bubble.image) then img else span -->
+                    <img v-if="bubble.image"  :src="'assets/images/' + bubble.image" :alt="bubble.name">
+                    <span v-else>{{ bubble.name }}</span>
                 </div>
             </div>
             <hr>

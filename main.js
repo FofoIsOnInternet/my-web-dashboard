@@ -8,9 +8,20 @@ const app = Vue.createApp({
         this.fetchData();
     },
     methods: {
+        /**
+         * Open a new window with the given url.
+         * @param {String} url 
+         */
         goToLink(url) {
             window.open(url,"_blank",null);
         },
+
+        /**
+         * Calculates if the text color should rather be black or white 
+         * depending on the background color.
+         * @param {String} bgColor Hexadecimal color code
+         * @returns "black" or "white"
+         */
         getTextColor(bgColor) {
             // Convert hex color to RGB
             const rgb = bgColor.match(/\w\w/g).map(hex => parseInt(hex, 16));
@@ -19,6 +30,11 @@ const app = Vue.createApp({
             // Return black for bright backgrounds, white for dark
             return luminance > 0.5 ? "black" : "white";
         },
+
+        /**
+         * Fetch user's sections and bubbles from the assets folder
+         * @returns json
+         */
         async fetchData(){
             return await fetch("assets/data.json")
             .then(response=>{
