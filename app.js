@@ -39,7 +39,7 @@ const app = Vue.createApp({
          * @returns json
          */
         async fetchData(){
-            return await fetch("assets/data.json")
+            return await fetch("get-data")
             .then(response=>{
                 if(response.ok){
                     return response.json();
@@ -62,6 +62,23 @@ const app = Vue.createApp({
                         }
                     ]
                 };
+            });
+        },
+
+        async saveData(){
+            const formData = new FormData();
+            const data = { sections:this.sections}
+            formData.append("data",JSON.stringify(data));
+            await fetch("set-data",{
+                method:"POST",
+                body:formData
+            })
+            .then(response=>{
+                if(response.ok){
+                    console.log(response.message);
+                }else{
+                    console.error(response.message);
+                }
             });
         },
 
@@ -135,7 +152,7 @@ const app = Vue.createApp({
                 name:name,
                 url:url,
                 color:color,
-                image:image
+                image: image && image.name.length === 0 ? this.sections[sectionId].bubbles[bubbleId].image : image.name
             }
         },
 
@@ -144,8 +161,13 @@ const app = Vue.createApp({
          * @param {int} sectionId id of the bubble's section
          * @param {int} bubbleId id of the bubble
          */
-        deleteBubble(sectionId,bubbleId){
+        async deleteBubble(sectionId,bubbleId){
+            // Delete image
+            await this.deleteImage(this.sections[sectionId].bubbles[bubbleId].image);
+            // Delete bubble
             this.sections[sectionId].bubbles.splice(bubbleId,1);
+            // Save data
+            await this.saveData();
         },
 
         /**
@@ -153,18 +175,65 @@ const app = Vue.createApp({
          * @param {int} sectionId id of the bubble's section
          * @param {int} bubbleId id of the bubble
          */
-        submitFormBubble(sectionId,bubbleId){
+        async submitFormBubble(sectionId,bubbleId){
             // Finds the right form
             let form = document.getElementById(`${sectionId},${bubbleId}`);
             // Gets the values
             let name = form.querySelector("#name").value;
             let url = form.querySelector("#url").value;
             let color = form.querySelector("#color").value;
-            let image = form.querySelector("#image").value;
+            // Get the image 
+            let image = form.querySelector("#image").files[0];
+            await this.saveImage(image); // Upload the image
             // Edit the bubble
             this.editBubble(sectionId,bubbleId,name,url,color,image);
             // Close the editor
             this.stopBubbleEditor(sectionId,bubbleId);
+            // Save data
+            this.saveData();
+        },
+
+        /**
+         * Save the given image.
+         * @param {File} file image to be saved
+         * @returns The file name
+         */
+        async saveImage(file){
+            if(file){
+                const formData = new FormData();
+                formData.append("image",file);
+
+                return await fetch("upload-image",{
+                    method:"POST",
+                    body:formData
+                })
+                .then(response=>{
+                    if(!response.ok){
+                        console.error(response.error);
+                    }
+                });
+            }
+        },
+
+        /**
+         * Delete the given image.
+         * @param {String} imagename Name of the image
+         */
+        async deleteImage(imagename){
+            if(imagename && imagename.length > 0){
+                const formData = new FormData();
+                formData.append("imagename",imagename);
+
+                await fetch("delete-image",{
+                    method:"POST",
+                    body:formData
+                })
+                .then(response=>{
+                    if(!response.ok){
+                        console.error(response.error);
+                    }
+                });
+            }
         },
     },
 });
