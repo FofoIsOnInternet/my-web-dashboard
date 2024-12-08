@@ -9,7 +9,14 @@
 <body>
     <!-- Background image -->
     <div id="bg-image"></div>
+    <!-- Main container -->
     <main id="app">
+        <!-- Editor buttons -->
+        <div id="editor">
+            <button v-if="!this.editor" @click="startEditor()">Edit</button>
+            <button v-else @click="stopEditor()">Exit</button>
+        </div>
+        <!-- Main content -->
         <h1>DashBoard</h1>
         <hr>
         <!-- All sections -->
@@ -21,12 +28,52 @@
                     v-for="bubble in section.bubbles" 
                     :key="bubble.id"
                     class="bubble"
-                    @click="goToLink(bubble.url)"
+                    @click="if(!this.editor)goToLink(bubble.url);"
                     :style="{ backgroundColor: bubble.color, color: getTextColor(bubble.color) }"
+                    :edited="bubble.editor || false"
                 >
-                    <!-- if(bubble.image) then img else span -->
-                    <img v-if="bubble.image"  :src="'assets/images/' + bubble.image" :alt="bubble.name">
+                    <!-- Right - coin : id -->
+                    <div v-if="this.editor && !bubble.editor" class="coin-container">
+                        <div class="coin" title="id">{{ bubble.id }}</div>
+                    </div>
+                    <!-- Left - coin buttons : delete, edit, move -->
+                    <div v-if="this.editor && !bubble.editor" class="coin-container">
+                        <button class="coin" title="Delete" @click="deleteBubble(section.id,bubble.id)">
+                            <img class="icon" alt="delete icon" src="assets/icons/bin.png">
+                        </button>
+                        <button class="coin" title="Edit" @click="startBubbleEditor(section.id,bubble.id)">
+                            <img class="icon" alt="edit icon" src="assets/icons/pencil.png">
+                        </button>
+                    </div>
+                    <!-- bubble editor -->
+                    <form v-if="bubble.editor" :id="'' + section.id + ',' + bubble.id">
+                        <label for="name">Name:*</label>
+                        <input type="text" id="name" name="name" placeholder="My website" :value="bubble.name" required>
+                        <br>
+                        <label for="url">URL:*</label>
+                        <input type="url" id="url" name="url" placeholder="https://example.com" :value="bubble.url" required>
+                        <br>
+                        <label for="color">Color:*</label>
+                        <input type="color" id="color" name="color" :value="bubble.color" required> 
+                        <br>
+                        <label for="image">Image:</label>
+                        <input type="file" id="image" accept="image/*" name="image" :value="bubble.image">
+                        <button type="button" value="Ok" @click="submitFormBubble(section.id,bubble.id)">Ok</button>
+                    </form>
+                    <!-- bubble image -->
+                    <img v-else-if="bubble.image"  :src="'assets/images/' + bubble.image" :alt="bubble.name">
+                    <!-- bubble name -->
                     <span v-else>{{ bubble.name }}</span>
+                </div>
+                <!-- Add a new bubble -->
+                <div 
+                    v-if="this.editor"
+                    class="bubble"
+                    style="background-color: grey; color: black;"
+                    @click="startBubbleEditor(section.id,null)"
+                    edited="false"
+                >
+                    <span>New link</span>
                 </div>
             </div>
             <hr>

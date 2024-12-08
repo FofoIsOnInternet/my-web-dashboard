@@ -2,7 +2,10 @@
 
 const app = Vue.createApp({
     data(){
-        return {sections:[]};
+        return {
+            sections:[],
+            editor:false
+        };
     },
     mounted(){
         this.fetchData();
@@ -60,6 +63,108 @@ const app = Vue.createApp({
                     ]
                 };
             });
+        },
+
+        /**
+         * Start the dashboard editor
+         */
+        startEditor(){
+            // init editor
+            this.editor = true;
+            // init bubble editors
+            this.sections.forEach(section => {
+                section.bubbles.forEach(bubble => {
+                    bubble.editor = false;
+                });
+            });
+        },
+
+        /**
+         * Stop the dashboard editor
+         */
+        stopEditor(){
+            this.editor = false;
+            this.sections.forEach(section => {
+                section.bubbles.forEach(bubble => {
+                    bubble.editor = false;
+                });
+            });
+        },
+        
+        /**
+         * Open the form to edit the given bubble.
+         * @param {int} sectionId id of the bubble's section
+         * @param {int} bubbleId id of the bubble
+         */
+        startBubbleEditor(sectionId,bubbleId){
+            if(!bubbleId){
+                this.sections[sectionId].bubbles.push({
+                    id:this.sections[sectionId].bubbles.length,
+                    name:"",
+                    url:"",
+                    color:"#808080",
+                    image:"",
+                    editor:true
+                })
+            }else{
+                this.sections[sectionId].bubbles[bubbleId].editor = true;
+            }
+        },
+        
+        /**
+         * Close the editor of the given bubble.
+         * @param {int} sectionId id of the bubble's section
+         * @param {int} bubbleId id of the bubble
+         */
+        stopBubbleEditor(sectionId,bubbleId){
+            this.sections[sectionId].bubbles[bubbleId].editor = false;
+        },
+        
+        /**
+         * Edit the given bubble in the system.
+         * @param {int} sectionId id of the bubble's section
+         * @param {int} bubbleId id of the bubble
+         * @param {string} name new name
+         * @param {string} url new url
+         * @param {string} color new color
+         * @param {string} image new image
+         */
+        editBubble(sectionId,bubbleId,name,url,color,image){
+            this.sections[sectionId].bubbles[bubbleId] = {
+                id:bubbleId,
+                name:name,
+                url:url,
+                color:color,
+                image:image
+            }
+        },
+
+        /**
+         * Delete the given bubble from the system.
+         * @param {int} sectionId id of the bubble's section
+         * @param {int} bubbleId id of the bubble
+         */
+        deleteBubble(sectionId,bubbleId){
+            this.sections[sectionId].bubbles.splice(bubbleId,1);
+        },
+
+        /**
+         * Result of submit button.
+         * @param {int} sectionId id of the bubble's section
+         * @param {int} bubbleId id of the bubble
+         */
+        submitFormBubble(sectionId,bubbleId){
+            // Finds the right form
+            let form = document.getElementById(`${sectionId},${bubbleId}`);
+            // Gets the values
+            let name = form.querySelector("#name").value;
+            let url = form.querySelector("#url").value;
+            let color = form.querySelector("#color").value;
+            let image = form.querySelector("#image").value;
+            // Edit the bubble
+            this.editBubble(sectionId,bubbleId,name,url,color,image);
+            // Close the editor
+            this.stopBubbleEditor(sectionId,bubbleId);
         },
     },
 });
