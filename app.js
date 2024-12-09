@@ -1,5 +1,12 @@
 // main.js
 
+// Imports
+import BubbleManager from "./src/managers/BubbleManager.js";
+import DashboardManager from "./src/managers/DashboardManager.js";
+import { saveImage } from "./src/utils/ImageHandling.js";
+import { goToLink, getTextColor } from "./src/utils/Utility.js";
+
+// App
 const app = Vue.createApp({
     data(){
         return {
@@ -8,167 +15,65 @@ const app = Vue.createApp({
         };
     },
     mounted(){
+        this.bubbleManager = new BubbleManager(this.updateView);
+        this.dashboardManager = new DashboardManager(this.updateView);
         this.fetchData();
     },
     methods: {
-        /**
-         * Open a new window with the given url.
-         * @param {String} url 
-         */
-        goToLink(url) {
-            window.open(url,"_blank",null);
+
+        updateView() {
+            this.sections = Vue.ref(this.bubbleManager.getSections());
+            this.editor = Vue.ref(this.dashboardManager.editor);
         },
 
-        /**
-         * Calculates if the text color should rather be black or white 
-         * depending on the background color.
-         * @param {String} bgColor Hexadecimal color code
-         * @returns "black" or "white"
-         */
-        getTextColor(bgColor) {
-            // Convert hex color to RGB
-            const rgb = bgColor.match(/\w\w/g).map(hex => parseInt(hex, 16));
-            // Calculate relative luminance
-            const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-            // Return black for bright backgrounds, white for dark
-            return luminance > 0.5 ? "black" : "white";
+
+        // UTILITY
+
+        goToLink,
+
+        getTextColor,
+
+
+        // DASHBOARD MANAGER
+        
+        startEditor(){
+            this.dashboardManager.startEditor();
         },
 
-        /**
-         * Fetch user's sections and bubbles from the assets folder
-         * @returns json
-         */
+        
+        stopEditor(){
+            this.dashboardManager.stopEditor();
+        },
+        
+
+        // BUBBLE MANAGER
+
         async fetchData(){
-            return await fetch("get-data")
-            .then(response=>{
-                if(response.ok){
-                    return response.json();
-                }else{
-                    throw new Error(`Couldn't fetch links (${response.status})`);
-                }
-            })
-            .then(data=>{
-                this.sections = data.sections;
-            })
-            .catch(error=>{
-                this.sections = {
-                    sections: [
-                        {
-                            id: 0,
-                            title: error.message,
-                            bubbles:[
-                                { name:"Reload page", url:window.location.href }
-                            ]
-                        }
-                    ]
-                };
-            });
+            await this.bubbleManager.fetchData();
         },
 
         async saveData(){
-            const formData = new FormData();
-            const data = { sections:this.sections}
-            formData.append("data",JSON.stringify(data));
-            await fetch("set-data",{
-                method:"POST",
-                body:formData
-            })
-            .then(response=>{
-                if(response.ok){
-                    console.log(response.message);
-                }else{
-                    console.error(response.message);
-                }
-            });
+            await this.bubbleManager.saveData();
         },
 
-        /**
-         * Start the dashboard editor
-         */
-        startEditor(){
-            // init editor
-            this.editor = true;
-            // init bubble editors
-            this.sections.forEach(section => {
-                section.bubbles.forEach(bubble => {
-                    bubble.editor = false;
-                });
-            });
-        },
-
-        /**
-         * Stop the dashboard editor
-         */
-        stopEditor(){
-            this.editor = false;
-            this.sections.forEach(section => {
-                section.bubbles.forEach(bubble => {
-                    bubble.editor = false;
-                });
-            });
-        },
-        
-        /**
-         * Open the form to edit the given bubble.
-         * @param {int} sectionId id of the bubble's section
-         * @param {int} bubbleId id of the bubble
-         */
         startBubbleEditor(sectionId,bubbleId){
-            if(!bubbleId){
-                this.sections[sectionId].bubbles.push({
-                    id:this.sections[sectionId].bubbles.length,
-                    name:"",
-                    url:"",
-                    color:"#808080",
-                    image:"",
-                    editor:true
-                })
-            }else{
-                this.sections[sectionId].bubbles[bubbleId].editor = true;
-            }
-        },
-        
-        /**
-         * Close the editor of the given bubble.
-         * @param {int} sectionId id of the bubble's section
-         * @param {int} bubbleId id of the bubble
-         */
-        stopBubbleEditor(sectionId,bubbleId){
-            this.sections[sectionId].bubbles[bubbleId].editor = false;
-        },
-        
-        /**
-         * Edit the given bubble in the system.
-         * @param {int} sectionId id of the bubble's section
-         * @param {int} bubbleId id of the bubble
-         * @param {string} name new name
-         * @param {string} url new url
-         * @param {string} color new color
-         * @param {string} image new image
-         */
-        editBubble(sectionId,bubbleId,name,url,color,image){
-            this.sections[sectionId].bubbles[bubbleId] = {
-                id:bubbleId,
-                name:name,
-                url:url,
-                color:color,
-                image: image && image.name.length === 0 ? this.sections[sectionId].bubbles[bubbleId].image : image.name
-            }
+            this.bubbleManager.startBubbleEditor(sectionId,bubbleId);
         },
 
-        /**
-         * Delete the given bubble from the system.
-         * @param {int} sectionId id of the bubble's section
-         * @param {int} bubbleId id of the bubble
-         */
-        async deleteBubble(sectionId,bubbleId){
-            // Delete image
-            await this.deleteImage(this.sections[sectionId].bubbles[bubbleId].image);
-            // Delete bubble
-            this.sections[sectionId].bubbles.splice(bubbleId,1);
-            // Save data
-            await this.saveData();
+        stopBubbleEditor(sectionId,bubbleId){
+            this.bubbleManager.stopBubbleEditor(sectionId,bubbleId);
         },
+        
+        editBubble(sectionId,bubbleId,name,url,color,image){
+            this.bubbleManager.editBubble(sectionId,bubbleId,name,url,color,image);
+        },
+
+        async deleteBubble(sectionId,bubbleId){
+            this.bubbleManager.deleteBubble(sectionId,bubbleId);
+        },
+
+
+        // BUBBLE FORM
 
         /**
          * Result of submit button.
@@ -184,7 +89,7 @@ const app = Vue.createApp({
             let color = form.querySelector("#color").value;
             // Get the image 
             let image = form.querySelector("#image").files[0];
-            await this.saveImage(image); // Upload the image
+            await saveImage(image); // Upload the image
             // Edit the bubble
             this.editBubble(sectionId,bubbleId,name,url,color,image);
             // Close the editor
@@ -193,48 +98,6 @@ const app = Vue.createApp({
             this.saveData();
         },
 
-        /**
-         * Save the given image.
-         * @param {File} file image to be saved
-         * @returns The file name
-         */
-        async saveImage(file){
-            if(file){
-                const formData = new FormData();
-                formData.append("image",file);
-
-                return await fetch("upload-image",{
-                    method:"POST",
-                    body:formData
-                })
-                .then(response=>{
-                    if(!response.ok){
-                        console.error(response.error);
-                    }
-                });
-            }
-        },
-
-        /**
-         * Delete the given image.
-         * @param {String} imagename Name of the image
-         */
-        async deleteImage(imagename){
-            if(imagename && imagename.length > 0){
-                const formData = new FormData();
-                formData.append("imagename",imagename);
-
-                await fetch("delete-image",{
-                    method:"POST",
-                    body:formData
-                })
-                .then(response=>{
-                    if(!response.ok){
-                        console.error(response.error);
-                    }
-                });
-            }
-        },
     },
 });
 

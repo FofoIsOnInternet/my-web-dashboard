@@ -13,7 +13,9 @@ CORS(app)
 
 
 # Consts
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'assets/images')
+IMAGE_FOLDER = os.path.join(os.getcwd(), 'assets/images')
+ICON_FOLDER = os.path.join(os.getcwd(),'assets/icons')
+SOURCE_FOLDER = os.path.join(os.getcwd(),'src')
 
 
 # End-points
@@ -38,11 +40,20 @@ def get_css():
 # Images
 @app.route('/assets/images/<filename>', methods=['GET'])
 def get_image(filename):
-    return flask.send_from_directory(UPLOAD_FOLDER, filename)
+    return flask.send_from_directory(IMAGE_FOLDER, filename)
 # Icons
 @app.route('/assets/icons/<filename>', methods=['GET'])
 def get_icon(filename):
-    return flask.send_from_directory("./assets/icons", filename)
+    return flask.send_from_directory(ICON_FOLDER, filename)
+
+
+# Sources
+@app.route('/src/<package>/<file>',methods=['GET'])
+def get_class(package,file):
+    file_path = os.path.join(SOURCE_FOLDER,package,file)
+    if not os.path.exists(file_path):
+        return flask.jsonify({'error': 'File not found'}), 404
+    return flask.send_file(file_path)
 
 
 # User data - assets/data.json
@@ -82,7 +93,7 @@ def upload_image():
     filename = secure_filename(file.filename)
     
     # Save the file to the upload folder
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file_path = os.path.join(IMAGE_FOLDER, filename)
     file.save(file_path)
 
     return flask.jsonify({'message': 'File uploaded successfully!', 'filename': file.filename})
@@ -93,7 +104,7 @@ def delete_image():
         return flask.jsonify({'error': 'No imagename part in the request'}), 400
     
     filename = secure_filename(flask.request.form.get('imagename'))
-    file_path = os.path.join(UPLOAD_FOLDER,filename)
+    file_path = os.path.join(IMAGE_FOLDER,filename)
     if os.path.exists(file_path):
         os.remove(file_path)
     
