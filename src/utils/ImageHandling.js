@@ -7,9 +7,10 @@
  */
 export async function saveImage(file){
     if(file){
+        // Create form data
         const formData = new FormData();
         formData.append("image",file);
-
+        // Send
         return await fetch("upload-image",{
             method:"POST",
             body:formData
@@ -28,9 +29,10 @@ export async function saveImage(file){
  */
 export async function deleteImage(imagename){
     if(imagename && imagename.length > 0){
+        // Create form data
         const formData = new FormData();
         formData.append("imagename",imagename);
-
+        // Send
         await fetch("delete-image",{
             method:"POST",
             body:formData

@@ -85,6 +85,7 @@ class BubbleManager{
      * @param {int} bubbleId id of the bubble
      */
     startBubbleEditor(sectionId,bubbleId){
+        // If no bubbleId is give --> create a new one
         if(!bubbleId && bubbleId != 0){
             this.sections[sectionId].bubbles.push({
                 id:this.sections[sectionId].bubbles.length,
@@ -95,8 +96,10 @@ class BubbleManager{
                 editor:true
             })
         }else{
+            // Start bubble editor
             this.sections[sectionId].bubbles[bubbleId].editor = true;
         }
+        // Notify of change
         this.notifyChange();
     }
     
@@ -106,7 +109,9 @@ class BubbleManager{
      * @param {int} bubbleId id of the bubble
      */
     stopBubbleEditor(sectionId,bubbleId){
+        // Stop bubble editor
         this.sections[sectionId].bubbles[bubbleId].editor = false;
+        // Notify of change
         this.notifyChange();
     }
     
@@ -120,10 +125,12 @@ class BubbleManager{
      * @param {File} image new image
      */
     editBubble(sectionId,bubbleId,name,url,color,image){
+        // If no new image is given keep the current image
         let imagename = this.sections[sectionId].bubbles[bubbleId].image;
         if(image && image.name.length != 0){
             imagename = image.name;
         }
+        // Replace the bubble
         this.sections[sectionId].bubbles[bubbleId] = {
             id:bubbleId,
             name:name,
@@ -131,6 +138,7 @@ class BubbleManager{
             color:color,
             image: imagename
         }
+        // Notify of change
         this.notifyChange();
     }
 
@@ -148,6 +156,12 @@ class BubbleManager{
         await this.saveData();
         this.notifyChange();
     }
+
+    /**
+     * Keeps the same order but remove the space between bubbles.
+     * Ex: 0, 1, 3, 4 ---> 0, 1, 2, 3
+     */
+    reorderBubbles(){}
 }
 
 export default BubbleManager;
