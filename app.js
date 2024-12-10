@@ -17,7 +17,7 @@ const app = Vue.createApp({
     mounted(){
         this.bubbleManager = new BubbleManager(this.updateView);
         this.dashboardManager = new DashboardManager(this.updateView);
-        this.fetchData();
+        this.bubbleManager.fetchData();
     },
     methods: {
 
@@ -48,24 +48,8 @@ const app = Vue.createApp({
 
         // BUBBLE MANAGER
 
-        async fetchData(){
-            await this.bubbleManager.fetchData();
-        },
-
-        async saveData(){
-            await this.bubbleManager.saveData();
-        },
-
         startBubbleEditor(sectionId,bubbleId){
             this.bubbleManager.startBubbleEditor(sectionId,bubbleId);
-        },
-
-        stopBubbleEditor(sectionId,bubbleId){
-            this.bubbleManager.stopBubbleEditor(sectionId,bubbleId);
-        },
-        
-        editBubble(sectionId,bubbleId,name,url,color,image){
-            this.bubbleManager.editBubble(sectionId,bubbleId,name,url,color,image);
         },
 
         async deleteBubble(sectionId,bubbleId){
@@ -91,11 +75,11 @@ const app = Vue.createApp({
             let image = form.querySelector("#image").files[0];
             await saveImage(image); // Upload the image
             // Edit the bubble
-            this.editBubble(sectionId,bubbleId,name,url,color,image);
+            this.bubbleManager.editBubble(sectionId,bubbleId,name,url,color,image);
             // Close the editor
-            this.stopBubbleEditor(sectionId,bubbleId);
+            this.bubbleManager.stopBubbleEditor(sectionId,bubbleId);
             // Save data
-            this.saveData();
+            this.bubbleManager.saveData();
         },
 
     },

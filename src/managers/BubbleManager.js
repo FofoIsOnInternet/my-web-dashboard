@@ -85,7 +85,7 @@ class BubbleManager{
      * @param {int} bubbleId id of the bubble
      */
     startBubbleEditor(sectionId,bubbleId){
-        if(!bubbleId){
+        if(!bubbleId && bubbleId != 0){
             this.sections[sectionId].bubbles.push({
                 id:this.sections[sectionId].bubbles.length,
                 name:"",

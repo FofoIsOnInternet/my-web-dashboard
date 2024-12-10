@@ -123,6 +123,10 @@ input{
 }
 .coin-container + .coin-container{
     left:85%;
+    visibility: hidden;
+}
+.bubble:hover > .coin-container + .coin-container{
+    visibility: visible;
 }
 
 /* general css for coins */
