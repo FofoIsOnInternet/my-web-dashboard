@@ -71,9 +71,7 @@ class BubbleManager{
             body:formData
         })
         .then(response=>{
-            if(response.ok){
-                console.log(response.message);
-            }else{
+            if(!response.ok){
                 console.error(response.message);
             }
         });
@@ -152,16 +150,46 @@ class BubbleManager{
         await deleteImage(this.sections[sectionId].bubbles[bubbleId].image);
         // Delete bubble
         this.sections[sectionId].bubbles.splice(bubbleId,1);
+        // In case a bubble was removed in the middle 
+        this.reorderBubbles();
         // Save data
         await this.saveData();
+        // Notify of change
         this.notifyChange();
+    }
+
+    async moveBubble(sectionId,bubbleId){
+        // Ask: Move to section
+        let newSectionId = parseInt(prompt("Move to section: ",sectionId));
+        // Ask: Move at bubble
+        let newBubbleId = parseInt(prompt("Move at bubble: ",bubbleId));
+        // If inputs are correct
+        if(!isNaN(newSectionId) && !isNaN(newBubbleId) &&
+            newSectionId >= 0 && newSectionId <= this.sections.length &&
+            newBubbleId >= 0 && newBubbleId <= this.sections[newSectionId].bubbles.length){
+            // Move
+            let bubble = this.sections[sectionId].bubbles.splice(bubbleId,1)[0];
+            this.sections[newSectionId].bubbles.splice(newBubbleId,0,bubble);
+            // Reorder other bubbles
+            this.reorderBubbles();
+            // Save data
+            await this.saveData();
+            // Notify of change
+            this.notifyChange();
+        }
     }
 
     /**
      * Keeps the same order but remove the space between bubbles.
      * Ex: 0, 1, 3, 4 ---> 0, 1, 2, 3
      */
-    reorderBubbles(){}
+    reorderBubbles(){
+        this.sections.forEach((section=>{
+            for(let i=0;i<section.bubbles.length;i++){
+                section.bubbles[i].id = i;
+            }
+        }));
+    }
 }
 
 export default BubbleManager;

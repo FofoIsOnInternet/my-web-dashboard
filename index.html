@@ -21,9 +21,13 @@
         <hr>
         <!-- All sections -->
         <section v-for="section in sections" :key="section.id">
-            <h2>{{ section.title }}</h2>
+            <h2>
+                {{ section.title }}
+                <!-- coin : id -->
+                <div v-if="this.editor" class="coin" title="section id">{{ section.id }}</div>
+            </h2>
+            <!-- All bubbles -->
             <div class="bubbles">
-                <!-- All bubbles -->
                 <div 
                     v-for="bubble in section.bubbles" 
                     :key="bubble.id"
@@ -34,7 +38,7 @@
                 >
                     <!-- Right - coin : id -->
                     <div v-if="this.editor && !bubble.editor" class="coin-container">
-                        <div class="coin" title="id">{{ bubble.id }}</div>
+                        <div class="coin" title="bubble id">{{ bubble.id }}</div>
                     </div>
                     <!-- Left - coin buttons : delete, edit, move -->
                     <div v-if="this.editor && !bubble.editor" class="coin-container">
@@ -43,6 +47,9 @@
                         </button>
                         <button class="coin" title="Edit" @click="startBubbleEditor(section.id,bubble.id)">
                             <img class="icon" alt="edit icon" src="assets/icons/pencil.png">
+                        </button>
+                        <button class="coin" title="Move" @click="moveBubble(section.id,bubble.id)">
+                            <img class="icon" alt="move icon" src="assets/icons/move.png">
                         </button>
                     </div>
                     <!-- bubble editor -->

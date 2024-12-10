@@ -56,6 +56,10 @@ const app = Vue.createApp({
             this.bubbleManager.deleteBubble(sectionId,bubbleId);
         },
 
+        async moveBubble(sectionId,bubbleId){
+            this.bubbleManager.moveBubble(sectionId,bubbleId);
+        },
+
 
         // BUBBLE FORM
 

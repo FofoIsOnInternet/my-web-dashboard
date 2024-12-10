@@ -131,11 +131,15 @@ input{
 
 /* general css for coins */
 .coin{
+    display: inline-block;
     width:25px;
     height: 25px;
     border-radius: 50%;
     color:white;
     background-color: rgba(66, 66, 66, 0.574);
+    font-size: medium;
+    font-weight: 100;
+    text-align: center;
     cursor: default;
     z-index: 1;
 }
@@ -150,7 +154,6 @@ button.coin:hover{
 }
 
 .coin > .icon{
-    width: 70%;
-    height: 70%;
+    width: 80%;
     filter: invert();
 }
