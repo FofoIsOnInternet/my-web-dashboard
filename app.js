@@ -60,6 +60,13 @@ const app = Vue.createApp({
             await this.bubbleManager.moveSection(sectionId);
         },
 
+        async newSectionButton(){
+            let title = prompt("Name:");
+            if(title){
+                await this.bubbleManager.addSection(title);
+            }
+        },
+
 
         // BUBBLES
 

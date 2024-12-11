@@ -110,9 +110,30 @@ section > :first-child{
 
 /* Editor buttons container */
 #editor{
-    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+    position: fixed;
     top: 0%;
     right:0%;
+    margin: 5px;
+}
+
+/* editor buttons */
+#editor > button{
+    font-size: 14px;
+    padding: 4px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+#editor > button:hover{
+    background-color: #0056b3;
+}
+#editor > button:focus{
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
 }
 
 /* bubble forms input*/

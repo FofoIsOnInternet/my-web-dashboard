@@ -209,6 +209,23 @@ class BubbleManager{
 
     // SECTIONS 
 
+    
+    /**
+     * Adds a new section at the end.
+     * @param {string} title 
+     */
+    async addSection(title){
+        // push new element
+        this.sections.push({
+            id:this.sections.length,
+            title:title,
+            bubbles:[]
+        });
+        // Save, notify
+        this.saveData();
+        this.notifyChange();
+    }
+
     /**
      * Edit the given section.
      * @param {int} sectionId 

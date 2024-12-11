@@ -14,7 +14,10 @@
         <!-- Editor buttons -->
         <div id="editor">
             <button v-if="!this.editor" @click="startEditor()">Edit</button>
-            <button v-else @click="stopEditor()">Exit</button>
+            <template v-else>
+                <button @click="stopEditor()">Exit</button>
+                <button @click="newSectionButton()">Add section</button>
+            </template>
         </div>
         <!-- Main content -->
         <h1>DashBoard</h1>
