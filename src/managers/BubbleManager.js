@@ -9,7 +9,9 @@ class BubbleManager{
         this.notifyChange = notifyChangeCallback;
     }
 
-    getSections=()=>this.sections;
+
+    // DATA
+
 
     /**
      * Fetch user's sections and bubbles
@@ -77,6 +79,10 @@ class BubbleManager{
         });
     }
 
+
+    // BUBBLE EDITOR
+
+
     /**
      * Open the form to edit the given bubble.
      * @param {int} sectionId id of the bubble's section
@@ -113,6 +119,10 @@ class BubbleManager{
         this.notifyChange();
     }
     
+
+    // BUBBLE
+
+
     /**
      * Edit the given bubble in the system.
      * @param {int} sectionId id of the bubble's section
@@ -158,6 +168,11 @@ class BubbleManager{
         this.notifyChange();
     }
 
+    /**
+     * Ask the user and moves the given bubble to a new sections and position.
+     * @param {int} sectionId id of the bubble's section
+     * @param {int} bubbleId id of the bubble
+     */
     async moveBubble(sectionId,bubbleId){
         // Ask: Move to section
         let newSectionId = parseInt(prompt("Move to section: ",sectionId));
@@ -189,6 +204,86 @@ class BubbleManager{
                 section.bubbles[i].id = i;
             }
         }));
+    }
+
+
+    // SECTIONS 
+
+    /**
+     * Edit the given section.
+     * @param {int} sectionId 
+     * @param {string} title 
+     */
+    editSection(sectionId, title){
+        this.sections[sectionId].title = title;
+    }
+
+    /**
+     * Ask the user and change the title of the given section.
+     * @param {int} sectionId 
+     */
+    async renameSection(sectionId){
+        // Ask for new title
+        let title = prompt(`Enter new title for section n°${sectionId}:`,this.sections[sectionId].title);
+        // if not canceled : edit, save, notify
+        if(title){
+            this.editSection(sectionId,title);
+            await this.saveData();
+            this.notifyChange();
+        }
+    }
+
+    /**
+     * Delete the given section.
+     * @param {int} sectionId 
+     */
+    async deleteSection(sectionId){
+        if(confirm(`Are you sure you want to delete section n°${sectionId}?`)){
+            // Delete all images
+            this.sections[sectionId].bubbles.forEach(bubble =>{
+                deleteImage(bubble.image);
+            });
+            // Remove
+            this.sections.splice(sectionId,1);
+            // Reorder other sections
+            this.reorderSections();
+            // save
+            await this.saveData();
+            // Notify of change
+            this.notifyChange();
+        }
+    }
+
+    /**
+     * Ask the user and move the given section to a new position.
+     * @param {int} sectionId 
+     */
+    async moveSection(sectionId){
+        // Ask: Move at section
+        let newSectionId = parseInt(prompt("Move at section: ",sectionId));
+        // If inputs are correct
+        if(!isNaN(newSectionId) &&
+            newSectionId >= 0 && newSectionId <= this.sections.length){
+            // Move
+            let section = this.sections.splice(sectionId,1)[0];
+            this.sections.splice(newSectionId,0,section);
+            // Reorder other sections
+            this.reorderSections();
+            // Save data
+            await this.saveData();
+            // Notify of change
+            this.notifyChange();
+        } 
+    }
+
+    /**
+     * Keeps the same order but remove the space between sections.
+     * Ex: 0, 1, 3, 4 ---> 0, 1, 2, 3
+     */
+    reorderSections(){
+        for(let i=0;i<this.sections.length;i++){
+            this.sections[i].id = i;
+        }
     }
 }
 

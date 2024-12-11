@@ -42,6 +42,13 @@ section{
     margin-left: 10px;
 }
 
+section > :first-child{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
 /* Bubbles container*/
 .bubbles{
     display: flex;
@@ -113,25 +120,31 @@ input{
     width: 120px;
 }
 
+/* coin containers */
 .coin-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* For sections : horizontal*/
     gap: 8px;
     position: absolute;
     top:0%;
-    left:0%;
+    left:0%; /* Coins : left */
 }
+/* For bubbles : vertical*/
+.bubble > .coin-container{
+    flex-direction: column;
+}
+
 .coin-container + .coin-container{
-    left:85%;
+    left:85%; /* Coins buttons : right */
     visibility: hidden;
 }
-.bubble:hover > .coin-container + .coin-container{
+/* On hover on the parent, display coin buttons */
+div:hover > .coin-container + .coin-container{
     visibility: visible;
 }
 
 /* general css for coins */
 .coin{
-    display: inline-block;
     width:25px;
     height: 25px;
     border-radius: 50%;
@@ -153,6 +166,7 @@ button.coin:hover{
     background-color: rgba(26, 26, 26, 0.574);
 }
 
+/* coin icons */
 .coin > .icon{
     width: 80%;
     filter: invert();

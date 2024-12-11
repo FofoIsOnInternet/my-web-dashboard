@@ -22,7 +22,7 @@ const app = Vue.createApp({
     methods: {
 
         updateView() {
-            this.sections = Vue.ref(this.bubbleManager.getSections());
+            this.sections = Vue.ref(this.bubbleManager.sections);
             this.editor = Vue.ref(this.dashboardManager.editor);
         },
 
@@ -34,7 +34,7 @@ const app = Vue.createApp({
         getTextColor,
 
 
-        // DASHBOARD MANAGER
+        // DASHBOARD
         
         startEditor(){
             this.dashboardManager.startEditor();
@@ -45,19 +45,34 @@ const app = Vue.createApp({
             this.dashboardManager.stopEditor();
         },
         
+        
+        // SECTIONS
 
-        // BUBBLE MANAGER
+        async renameSection(sectionId){
+            await this.bubbleManager.renameSection(sectionId);
+        },
+
+        async deleteSection(sectionId){
+            await this.bubbleManager.deleteSection(sectionId);
+        },
+
+        async moveSection(sectionId){
+            await this.bubbleManager.moveSection(sectionId);
+        },
+
+
+        // BUBBLES
 
         startBubbleEditor(sectionId,bubbleId){
             this.bubbleManager.startBubbleEditor(sectionId,bubbleId);
         },
 
         async deleteBubble(sectionId,bubbleId){
-            this.bubbleManager.deleteBubble(sectionId,bubbleId);
+            await this.bubbleManager.deleteBubble(sectionId,bubbleId);
         },
 
         async moveBubble(sectionId,bubbleId){
-            this.bubbleManager.moveBubble(sectionId,bubbleId);
+            await this.bubbleManager.moveBubble(sectionId,bubbleId);
         },
 
 
