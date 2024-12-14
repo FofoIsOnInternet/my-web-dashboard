@@ -22,6 +22,8 @@ html,body{
     background-position: center;
     filter: blur(2px);
     -webkit-filter: blur(2px);
+    top:-1%;
+    left: -1%;
 }
 
 /* main content container */
@@ -113,6 +115,7 @@ section > :first-child{
     display: flex;
     flex-direction: column;
     gap:5px;
+    max-width: 100px;
     position: fixed;
     top: 0%;
     right:0%;

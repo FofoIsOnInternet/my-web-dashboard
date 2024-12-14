@@ -11,19 +11,22 @@ const app = Vue.createApp({
     data(){
         return {
             sections:[],
-            editor:false
+            editor:false,
+            bgPath:""
         };
     },
-    mounted(){
+    async mounted(){
         this.bubbleManager = new BubbleManager(this.updateView);
         this.dashboardManager = new DashboardManager(this.updateView);
-        this.bubbleManager.fetchData();
+        await this.dashboardManager.fetchBackgroundPath();
+        await this.bubbleManager.fetchData();
     },
     methods: {
 
         updateView() {
             this.sections = Vue.ref(this.bubbleManager.sections);
             this.editor = Vue.ref(this.dashboardManager.editor);
+            this.bgPath = Vue.ref(this.dashboardManager.bgPath);
         },
 
 
@@ -44,7 +47,18 @@ const app = Vue.createApp({
         stopEditor(){
             this.dashboardManager.stopEditor();
         },
+
+        changeBackground(){
+            this.dashboardManager.changeBackground();
+        },
         
+        deleteBackground(){
+            this.dashboardManager.deleteBackground();
+        },
+
+        getBgPathCss(){
+            return `url('${this.bgPath}')`;
+        },
         
         // SECTIONS
 

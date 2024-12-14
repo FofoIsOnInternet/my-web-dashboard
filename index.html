@@ -7,16 +7,19 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <!-- Background image -->
-    <div id="bg-image"></div>
     <!-- Main container -->
     <main id="app">
+        <!-- Background image -->
+        <div id="bg-image" :style="{ backgroundImage:this.getBgPathCss() }"></div>
         <!-- Editor buttons -->
         <div id="editor">
             <button v-if="!this.editor" @click="startEditor()">Edit</button>
             <template v-else>
                 <button @click="stopEditor()">Exit</button>
                 <button @click="newSectionButton()">Add section</button>
+                <button @click="changeBackground()">Change background</button>
+                <button @click="deleteBackground()">Reset background</button>
+                <input type="file" id="input-bg-image" accept="image/*" name="image" style="visibility:hidden">
             </template>
         </div>
         <!-- Main content -->

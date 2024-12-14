@@ -16,7 +16,8 @@ CORS(app)
 IMAGE_FOLDER = os.path.join(os.getcwd(), 'assets/images')
 ICON_FOLDER = os.path.join(os.getcwd(),'assets/icons')
 SOURCE_FOLDER = os.path.join(os.getcwd(),'src')
-
+DEFAULT_BG = os.path.join(os.getcwd(),'assets/images/default-bg.JPG')
+CUSTOM_BG = os.path.join(os.getcwd(),'assets/images/custom-bg.JPG')
 
 # End-points
 # Client files
@@ -76,7 +77,26 @@ def set_data():
     
     return flask.jsonify({'message': 'Data saved successfully'})
 
-
+# User - background
+# Get
+@app.route('/get-bg',methods=['GET'])
+def get_bg():
+    path = os.path.relpath(DEFAULT_BG)
+    if os.path.exists(CUSTOM_BG):
+        path = os.path.relpath(CUSTOM_BG)
+    return flask.jsonify({'path': path}), 200
+# Set
+@app.route('/set-bg',methods=['POST'])
+def set_bg():
+    # Delete current bg
+    if os.path.exists(CUSTOM_BG):
+        os.remove(CUSTOM_BG)
+    # If an image is given upload it
+    if 'image' in flask.request.files :
+        file = flask.request.files['image']
+        file.save(CUSTOM_BG)
+    return flask.jsonify({'message':'Success!'}), 200
+    
 # User images - assets/images/
 
 # Upload Image
