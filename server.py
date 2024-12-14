@@ -2,17 +2,16 @@
 
 # Imports
 import flask
-from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 
 
 # Init flask 
 app = flask.Flask(__name__)
-CORS(app)
 
 
 # Consts
+DATA_FILE = os.path.join(os.getcwd(), 'assets/data.json')
 IMAGE_FOLDER = os.path.join(os.getcwd(), 'assets/images')
 ICON_FOLDER = os.path.join(os.getcwd(),'assets/icons')
 SOURCE_FOLDER = os.path.join(os.getcwd(),'src')
@@ -62,7 +61,7 @@ def get_class(package,file):
 # Get user data
 @app.route('/get-data',methods=['GET'])
 def get_data():
-    return flask.send_file("./assets/data.json")
+    return flask.send_file(DATA_FILE)
 # Set user data
 @app.route('/set-data',methods=['POST'])
 def set_data():
@@ -71,7 +70,7 @@ def set_data():
     
     data = flask.request.form.get('data')
     
-    with open('assets/data.json',mode="w",encoding="utf-8") as f:
+    with open(DATA_FILE,mode="w",encoding="utf-8") as f:
         f.write(data)
         f.close()
     
@@ -131,6 +130,17 @@ def delete_image():
     return flask.jsonify({'message': 'Image deleted successfully'})
 
 
+# Create app
+def create_app():
+    # Setup important files
+    if not os.path.exists(DATA_FILE):
+        with open(DATA_FILE,mode="w",encoding="utf-8") as f:
+            f.write('{"sections":[]}')
+            f.close()
+    # Return application
+    return app
+    
 # Main
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Run server
+    create_app().run(debug=True,port=8472)

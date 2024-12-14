@@ -1,6 +1,7 @@
 assets/images/*
 assets/data.json
 !assets/images/default-bg.JPG
+!assets/images/readme.png
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python

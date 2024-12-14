@@ -37,6 +37,7 @@ main{
 /* title */
 h1{
     text-align: center;
+    z-index: 10;
 }
 
 /* Sections of bubbles */
